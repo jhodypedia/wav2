@@ -17,6 +17,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new SocketIOServer(server, { cors: { origin: "*" } })
 
+// serve frontend
 app.use(express.static(path.join(__dirname, "public")))
 app.get("/", (_, res) => res.sendFile(path.join(__dirname, "public", "index.html")))
 
@@ -36,14 +37,15 @@ async function startSock() {
     const { state, saveCreds } = await useMultiFileAuthState("./session")
     sock = makeWASocket({
       auth: state,
-      printQRInTerminal: false,
+      printQRInTerminal: false, // QR akan dikirim ke frontend
       browser: Browsers.macOS("Safari")
     })
     sock.ev.on("creds.update", saveCreds)
 
-    // Koneksi + Auto Reconnect
+    // koneksi + auto reconnect
     sock.ev.on("connection.update", (update) => {
       const { connection, lastDisconnect, qr } = update
+
       if (qr) io.emit("qr", qr)
 
       if (connection === "open") {
@@ -58,7 +60,7 @@ async function startSock() {
       }
     })
 
-    // Pesan baru
+    // pesan baru
     sock.ev.on("messages.upsert", async ({ messages }) => {
       if (!messages?.length) return
       const m = messages[0]
@@ -91,7 +93,7 @@ async function startSock() {
       })
     })
 
-    // Perubahan daftar chat
+    // perubahan chat list
     sock.ev.on("chats.upsert", () => sendChatList().catch(() => {}))
     sock.ev.on("chats.update", () => sendChatList().catch(() => {}))
 
@@ -101,14 +103,8 @@ async function startSock() {
       const mapped = await Promise.all(
         (chats || []).map(async (c) => {
           let pfp = null
-          try {
-            pfp = await sock.profilePictureUrl(c.id, "image")
-          } catch {}
-          return {
-            jid: c.id,
-            name: c.name || c.displayName || c.id,
-            pfp
-          }
+          try { pfp = await sock.profilePictureUrl(c.id, "image") } catch {}
+          return { jid: c.id, name: c.name || c.displayName || c.id, pfp }
         })
       )
       io.emit("chat-list", mapped)
@@ -120,6 +116,7 @@ async function startSock() {
   }
 }
 
+// socket.io API untuk frontend
 io.on("connection", (socket) => {
   socket.emit("hello", { ok: true })
 
@@ -191,19 +188,19 @@ io.on("connection", (socket) => {
     }
   })
 
-  // Kirim media (image/video/audio/document/sticker webp)
+  // kirim media (image/video/audio/document/sticker)
   socket.on("send_media", async ({ jid, dataURL, caption, fileName }) => {
     try {
       if (!sock) throw new Error("Socket belum siap")
       const { buffer, mime } = dataURLToBuffer(dataURL)
       let content
       if (mime.startsWith("image/")) {
-        if (mime === "image/webp") content = { sticker: buffer }
+        if (mime === "image/webp") content = { sticker: buffer } // kirim sticker
         else content = { image: buffer, caption, mimetype: mime }
       } else if (mime.startsWith("video/")) {
         content = { video: buffer, caption, mimetype: mime }
       } else if (mime.startsWith("audio/")) {
-        content = { audio: buffer, mimetype: mime, ptt: true }
+        content = { audio: buffer, mimetype: mime, ptt: true } // voice note
       } else {
         content = { document: buffer, caption, mimetype: mime, fileName: fileName || "file" }
       }
@@ -216,7 +213,7 @@ io.on("connection", (socket) => {
     }
   })
 
-  // Emoji reaction ke pesan tertentu
+  // react emoji ke pesan tertentu
   socket.on("react_message", async ({ jid, key, emoji }) => {
     try {
       if (!sock) throw new Error("Socket belum siap")
