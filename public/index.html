@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WhatsApp SPA • Baileys v7</title>
 
-  <!-- Bootstrap (layout) -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
   <!-- jQuery -->
@@ -21,7 +21,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-  <!-- Emoji Picker Web Component (optional for reactions UI simple) -->
+  <!-- Emoji Picker (optional) -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 
   <style>
@@ -30,21 +30,21 @@
       --bubble-in:#202c33; --bubble-out:#005c4b; --text:#e9edef; --muted:#aebac1;
     }
     *{box-sizing:border-box}
-    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial}
-    .layout{display:flex; height:100vh; overflow:hidden}
+    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial}
 
-    /* Sidebar */
+    /* LOGIN SCREEN */
+    #login-screen{height:100vh; display:flex; align-items:center; justify-content:center; background:#111b21}
+    .login-card{background:#1b2730; color:#fff; padding:20px; border-radius:12px; border:1px solid var(--border); width:320px}
+
+    /* APP LAYOUT */
+    #app{display:none}
+    .layout{display:flex; height:100vh; overflow:hidden}
     .sidebar{width:380px; background:var(--panel-2); display:flex; flex-direction:column; border-right:1px solid var(--border)}
     .sidebar-header{padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; justify-content:space-between}
-    .status{display:flex; align-items:center; gap:8px}
     .dot{width:10px; height:10px; border-radius:50%}
     .dot.on{background:#22c55e} .dot.off{background:#ef4444}
-    .card-login{padding:16px; border-bottom:1px solid var(--border)}
-    .qr-box{display:flex; gap:12px; align-items:center}
-
     .search{padding:8px 12px; border-bottom:1px solid var(--border)}
     .search input{width:100%; background:#24323a; border:1px solid var(--border); border-radius:8px; color:var(--text); padding:8px 10px}
-
     .chat-list{flex:1; overflow:auto}
     .chat-item{display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer; align-items:center; transition:background .2s}
     .chat-item:hover{background:#26343b}
@@ -52,13 +52,11 @@
     .name{font-weight:600}
     .jid{font-size:.85rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px}
 
-    /* Main */
     .main{flex:1; display:flex; flex-direction:column; background:var(--panel)}
     .main-header{padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px}
     .header-avatar{width:40px; height:40px; border-radius:50%; object-fit:cover; background:#3a4b53}
     .title{font-weight:700}
     .subtitle{font-size:.85rem; color:var(--muted)}
-    .btn-menu{margin-left:auto}
 
     .main-body{flex:1; overflow:auto; padding:20px; display:flex; flex-direction:column; gap:10px; background:
       radial-gradient(1200px 600px at 0% 100%, rgba(0,168,132,.08), transparent 60%),
@@ -81,190 +79,151 @@
       .layout{flex-direction:column}
       .sidebar{position:absolute; inset:0 auto 0 -100%; z-index:50; transition:left .3s; width:86%}
       .sidebar.show{left:0}
-      .btn-menu{display:inline-flex}
     }
     @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
   </style>
 </head>
 <body>
-<div class="layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="fw-bold">Chats</div>
-      <div class="status"><span id="dot" class="dot off"></span><span id="connText">Disconnected</span></div>
-    </div>
 
-    <div class="card-login">
-      <div class="qr-box mb-2">
-        <canvas id="qrCanvas" width="140" height="140" style="border:1px solid var(--border)"></canvas>
-        <div class="small text-secondary">
-          <div><b>Login</b> — Scan QR via <i>Linked Devices</i></div>
-          <div class="input-group input-group-sm mt-2">
-            <input id="pairPhone" class="form-control" placeholder="62812xxxxxxx">
-            <button id="btnPair" class="btn btn-outline-light">Pair</button>
-          </div>
-          <div class="mt-2"><span id="pairCode" class="badge bg-dark">pairing: -</span></div>
+<!-- ===== LOGIN SCREEN (only before connected) ===== -->
+<section id="login-screen">
+  <div class="login-card">
+    <h4 class="mb-3 text-center">Login WhatsApp</h4>
+    <canvas id="qrCanvas" width="220" height="220" style="border:1px solid var(--border)" class="mx-auto d-block"></canvas>
+    <div class="mt-3 small">Scan QR via <b>Linked Devices</b> atau Pairing Code:</div>
+    <div class="input-group input-group-sm mt-2">
+      <input id="pairPhone" class="form-control" placeholder="62812xxxxxxx">
+      <button id="btnPair" class="btn btn-outline-light">Pair</button>
+    </div>
+    <div class="mt-2"><span id="pairCode" class="badge bg-secondary">pairing: -</span></div>
+    <button id="btnStart" class="btn btn-success w-100 mt-3">Start Socket</button>
+  </div>
+</section>
+
+<!-- ===== APP (hidden until connected) ===== -->
+<section id="app">
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="fw-bold">Chats</div>
+        <div class="d-flex align-items-center gap-2">
+          <span id="dot" class="dot off"></span><span id="connText">Disconnected</span>
         </div>
       </div>
-      <div class="d-grid gap-2">
-        <button id="btnStart" class="btn btn-success">Start Socket</button>
+      <div class="search"><input id="searchChat" placeholder="Search chat..."></div>
+      <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="main-header">
+        <img id="headerAvatar" class="header-avatar"/>
+        <div>
+          <div id="chatTitle" class="title">Pilih chat</div>
+          <div id="chatSubtitle" class="subtitle">—</div>
+        </div>
+        <button class="btn btn-outline-light btn-sm ms-auto d-md-none" id="btnMenu">☰</button>
       </div>
-    </div>
 
-    <div class="search">
-      <input id="searchChat" placeholder="Search chat...">
-    </div>
-    <div class="chat-list" id="chatList"></div>
-  </aside>
+      <div class="main-body" id="messages"></div>
 
-  <!-- MAIN -->
-  <main class="main">
-    <div class="main-header">
-      <img id="headerAvatar" class="header-avatar"/>
-      <div>
-        <div id="chatTitle" class="title">Pilih chat</div>
-        <div id="chatSubtitle" class="subtitle">—</div>
+      <div class="main-footer position-relative">
+        <button id="btnEmoji" class="btn-round" title="Emoji">😊</button>
+        <input id="msgInput" class="input" placeholder="Tulis pesan…"/>
+        <input id="fileInput" type="file" hidden/>
+        <button id="btnAttach" class="btn-round" title="Lampirkan">📎</button>
+        <button id="btnSend" class="btn-round" title="Kirim">➤</button>
+        <emoji-picker id="picker"></emoji-picker>
       </div>
-      <button class="btn btn-outline-light btn-sm btn-menu d-md-none" id="btnMenu">☰</button>
-    </div>
-
-    <div class="main-body" id="messages"></div>
-
-    <div class="main-footer position-relative">
-      <button id="btnEmoji" class="btn-round" title="Emoji">😊</button>
-      <input id="msgInput" class="input" placeholder="Tulis pesan…"/>
-      <input id="fileInput" type="file" hidden/>
-      <button id="btnAttach" class="btn-round" title="Lampirkan">📎</button>
-      <button id="btnSend" class="btn-round" title="Kirim">➤</button>
-      <emoji-picker id="picker"></emoji-picker>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
+</section>
 
 <script>
-  // ====== INIT
+  // ===== INIT =====
   const socket = io()
   let activeJid = null
-  let typingTimer = null
 
-  // Toastr default
-  toastr.options = {
-    positionClass: "toast-bottom-right",
-    timeOut: 2500,
-    progressBar: true
-  }
+  // Toastr setup
+  toastr.options = { positionClass: "toast-bottom-right", timeOut: 2500, progressBar: true }
 
-  // Elemen
-  const $sidebar = $("#sidebar")
-  const $qrCanvas = $("#qrCanvas")
-  const $chatList = $("#chatList")
-  const $messages = $("#messages")
-  const $chatTitle = $("#chatTitle")
-  const $chatSubtitle = $("#chatSubtitle")
-  const $headerAvatar = $("#headerAvatar")
-  const $btnStart = $("#btnStart")
-  const $btnPair = $("#btnPair")
-  const $pairPhone = $("#pairPhone")
-  const $pairCode = $("#pairCode")
-  const $dot = $("#dot")
-  const $connText = $("#connText")
-  const $msgInput = $("#msgInput")
-  const $btnSend = $("#btnSend")
-  const $btnAttach = $("#btnAttach")
-  const $fileInput = $("#fileInput")
-  const $btnEmoji = $("#btnEmoji")
-  const $picker = $("#picker")[0]
-  const $btnMenu = $("#btnMenu")
-  const $searchChat = $("#searchChat")
+  // Elements
+  const $login = $("#login-screen"), $app = $("#app")
+  const $qr = $("#qrCanvas"), $pairPhone = $("#pairPhone"), $btnPair = $("#btnPair"), $pairCode = $("#pairCode"), $btnStart = $("#btnStart")
+  const $sidebar = $("#sidebar"), $btnMenu = $("#btnMenu")
+  const $dot = $("#dot"), $connText = $("#connText")
+  const $searchChat = $("#searchChat"), $chatList = $("#chatList")
+  const $headerAvatar = $("#headerAvatar"), $chatTitle = $("#chatTitle"), $chatSubtitle = $("#chatSubtitle")
+  const $messages = $("#messages"), $msgInput = $("#msgInput"), $btnSend = $("#btnSend"), $btnAttach = $("#btnAttach"), $fileInput = $("#fileInput")
+  const $picker = $("#picker")[0], $btnEmoji = $("#btnEmoji")
 
-  // ====== UI Helpers
-  const setConn = (st) => {
-    if (st === "open" || st === "maybe-open") {
-      $dot.removeClass("off").addClass("on")
-      $connText.text("Connected")
-      toastr.success("Terhubung ke WhatsApp")
-    } else {
-      $dot.removeClass("on").addClass("off")
-      $connText.text("Disconnected")
-      toastr.warning("Koneksi terputus, mencoba ulang…")
-    }
-  }
-  const toggleSidebar = () => $sidebar.toggleClass("show")
+  // Show only login by default
+  function showLogin(){ $login.show(); $app.hide() }
+  function showApp(){ $login.hide(); $app.show() }
+  showLogin()
 
-  // ====== Events (UI)
-  $btnMenu.on("click", toggleSidebar)
-  $btnStart.on("click", () => socket.emit("start"))
-  $btnPair.on("click", () => {
+  // UI actions
+  $("#btnMenu").on("click", ()=> $sidebar.toggleClass("show"))
+  $btnStart.on("click", ()=> socket.emit("start"))
+  $btnPair.on("click", ()=>{
     const phone = $pairPhone.val().trim()
-    if (!phone) return toastr.error("Isi nomor, contoh: 62812xxxxxxx")
+    if(!phone) return toastr.error("Isi nomor, contoh: 62812xxxxxxx")
     socket.emit("request_pairing", phone)
   })
-  $btnEmoji.on("click", () => $picker.toggleAttribute("open"))
-  $picker.addEventListener("emoji-click", (e) => {
-    $msgInput.val($msgInput.val() + e.detail.unicode)
-    $picker.removeAttribute("open")
-    $msgInput.focus()
-  })
-  $btnAttach.on("click", () => $fileInput.trigger("click"))
-  $fileInput.on("change", () => {
-    const file = $fileInput[0].files?.[0]
-    if (!file) return
-    if (!activeJid) return toastr.error("Pilih chat dulu")
-    const reader = new FileReader()
-    reader.onload = () => {
-      const dataURL = reader.result
-      const caption = $msgInput.val().trim()
-      socket.emit("send_media", { jid: activeJid, dataURL, caption, fileName: file.name })
+  $btnEmoji.on("click", ()=> $picker.toggleAttribute("open"))
+  $picker.addEventListener("emoji-click", e => { $msgInput.val($msgInput.val()+e.detail.unicode); $picker.removeAttribute("open"); $msgInput.focus() })
+  $btnAttach.on("click", ()=> $fileInput.trigger("click"))
+  $fileInput.on("change", ()=>{
+    const f = $fileInput[0].files?.[0]; if(!f) return
+    if(!activeJid) return toastr.error("Pilih chat dulu")
+    const r = new FileReader()
+    r.onload = ()=> {
+      socket.emit("send_media", { jid: activeJid, dataURL:r.result, caption:$msgInput.val().trim(), fileName:f.name })
       $msgInput.val("")
     }
-    reader.readAsDataURL(file)
+    r.readAsDataURL(f)
   })
-
-  function sendText() {
-    const text = $msgInput.val().trim()
-    if (!text) return
-    if (!activeJid) return toastr.error("Pilih chat dulu")
-    socket.emit("send_message", { jid: activeJid, text })
-    $msgInput.val("")
+  function sendText(){
+    const t = $msgInput.val().trim(); if(!t) return
+    if(!activeJid) return toastr.error("Pilih chat dulu")
+    socket.emit("send_message", { jid: activeJid, text:t }); $msgInput.val("")
   }
   $btnSend.on("click", sendText)
-  $msgInput.on("keydown", (e) => {
-    if (activeJid) {
-      // optional typing indicator (bisa diaktifkan server bila mau)
-      clearTimeout(typingTimer)
-      typingTimer = setTimeout(() => {}, 800)
-    }
-    if (e.key === "Enter") { e.preventDefault(); sendText() }
-  })
+  $msgInput.on("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); sendText() } })
 
   $searchChat.on("input", function(){
     const q = $(this).val().toLowerCase()
-    $chatList.children().each(function(){
-      const t = $(this).text().toLowerCase()
-      $(this).toggle(t.includes(q))
-    })
+    $chatList.children().each(function(){ $(this).toggle($(this).text().toLowerCase().includes(q)) })
   })
 
-  // ====== Socket lifecycle
+  // Socket lifecycle
   socket.emit("start")
 
-  socket.on("hello", () => {})
-  socket.on("connection", (d) => setConn(d.status))
-  socket.on("qr", async (qr) => {
-    const ctx = $qrCanvas[0].getContext("2d")
-    ctx.clearRect(0,0,$qrCanvas[0].width,$qrCanvas[0].height)
-    await QRCode.toCanvas($qrCanvas[0], qr, { width: 140 })
-    toastr.info("Scan QR dari WhatsApp → Linked Devices")
-  })
-  socket.on("pairing-code", (code) => {
-    $pairCode.text("pairing: " + code)
-    toastr.info("Pairing code: " + code)
+  socket.on("connection", d=>{
+    if(d.status==="open" || d.status==="maybe-open"){
+      $dot.removeClass("off").addClass("on"); $connText.text("Connected")
+      showApp(); toastr.success("Terhubung ke WhatsApp")
+    } else {
+      $dot.removeClass("on").addClass("off"); $connText.text("Disconnected")
+      showLogin(); toastr.warning("Belum login / koneksi terputus")
+    }
   })
 
-  socket.on("chat-list", (list) => {
+  socket.on("qr", async (qr)=>{
+    const ctx = $qr[0].getContext("2d")
+    ctx.clearRect(0,0,$qr[0].width,$qr[0].height)
+    await QRCode.toCanvas($qr[0], qr, { width: 220 })
+    toastr.info("Scan QR dari WhatsApp → Linked Devices")
+  })
+
+  socket.on("pairing-code", code=>{
+    $pairCode.text("pairing: "+code); toastr.info("Pairing code: "+code)
+  })
+
+  socket.on("chat-list", list=>{
     $chatList.empty()
-    list.forEach((c) => {
+    list.forEach(c=>{
       const $item = $(`
         <div class="chat-item">
           ${c.pfp ? `<img class="avatar" src="${c.pfp}"/>` : `<div class="avatar">${(c.name||"?").charAt(0).toUpperCase()}</div>`}
@@ -274,66 +233,56 @@
           </div>
         </div>
       `)
-      $item.on("click", () => {
+      $item.on("click", ()=>{
         activeJid = c.jid
-        $chatTitle.text(c.name)
-        $chatSubtitle.text(c.jid)
-        $messages.empty()
-        socket.emit("open_chat", activeJid)
-        if (window.innerWidth < 768) toggleSidebar()
+        $chatTitle.text(c.name); $chatSubtitle.text(c.jid)
+        $messages.empty(); socket.emit("open_chat", activeJid)
+        if (window.innerWidth < 768) $sidebar.removeClass("show")
       })
       $chatList.append($item)
     })
   })
 
-  socket.on("chat-header", ({ jid, pfp }) => {
-    if (jid !== activeJid) return
-    if (pfp) $headerAvatar.attr("src", pfp)
-    else $headerAvatar.removeAttr("src").css("background", "#3a4b53")
+  socket.on("chat-header", ({ jid, pfp })=>{
+    if(jid!==activeJid) return
+    if(pfp) $headerAvatar.attr("src", pfp); else $headerAvatar.removeAttr("src").css("background", "#3a4b53")
   })
 
-  socket.on("chat-history", (arr) => {
+  socket.on("chat-history", arr=>{
     arr.forEach(renderMessage)
     $messages.scrollTop($messages.prop("scrollHeight"))
   })
 
-  socket.on("message", (m) => {
-    // jika pesan ke chat lain, kasih toast kecil
+  socket.on("message", m=>{
     if (activeJid !== m.jid) toastr.info(m.text || "Pesan baru")
     if (activeJid && m.jid !== activeJid) return
     renderMessage(m)
   })
 
-  socket.on("sent_ok", ({ type }) => {
-    if (type === "text") toastr.success("Pesan terkirim")
-    else if (type === "media") toastr.success("Media terkirim")
-    else if (type === "react") toastr.success("Reaction terkirim")
+  socket.on("sent_ok", ({type})=>{
+    if(type==="text") toastr.success("Pesan terkirim")
+    else if(type==="media") toastr.success("Media terkirim")
+    else if(type==="react") toastr.success("Reaction terkirim")
   })
 
-  socket.on("error", (e) => toastr.error(e || "Terjadi kesalahan"))
+  socket.on("error", e=> toastr.error(e || "Terjadi kesalahan"))
 
-  // ====== Render message dengan jQuery + reaction via prompt
-  function renderMessage(m) {
-    const $div = $(`<div class="msg ${m.fromMe ? "out" : "in"}"></div>`)
-    $div.on("contextmenu", (e) => {
+  // render pesan + reaction via contextmenu
+  function renderMessage(m){
+    const $div = $(`<div class="msg ${m.fromMe?'out':'in'}"></div>`)
+    // reaction
+    $div.on("contextmenu", e=>{
       e.preventDefault()
-      const emoji = prompt("React dengan emoji (mis. 😀,❤️,👍):")
-      if (emoji) socket.emit("react_message", { jid: m.jid, key: m.key, emoji })
+      const emoji = prompt("React emoji (mis. 😀,❤️,👍):")
+      if(emoji) socket.emit("react_message", { jid: m.jid, key: m.key, emoji })
     })
-
-    if (m.mediaThumb) {
-      $div.append(`<img class="thumb" src="${m.mediaThumb}"/>`)
-    }
-    $div.append(`<div>${m.text || (m.hasMedia ? "(media)" : "(pesan)")}</div>`)
+    if(m.mediaThumb) $div.append(`<img class="thumb" src="${m.mediaThumb}">`)
+    $div.append(`<div>${m.text || (m.hasMedia? "(media)":"(pesan)")}</div>`)
     const t = new Date(m.timestamp || Date.now())
     $div.append(`<div class="time">${t.toLocaleTimeString()}</div>`)
-
     $messages.append($div)
     $messages.scrollTop($messages.prop("scrollHeight"))
   }
-
-  // Mobile menu
-  $("#btnMenu").on("click", toggleSidebar)
 </script>
 </body>
 </html>
