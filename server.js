@@ -19,7 +19,7 @@ const io = new SocketIOServer(server, { cors: { origin: "*" } })
 
 app.use(express.static(path.join(__dirname, "public")))
 app.get("/", (_, res) =>
-  res.sendFile(path.join(__dirname, "public", "index.html"))
+  res.sendFile(path.join(__dirname, "public", "dashboard_user.html"))
 )
 
 let sock = null
