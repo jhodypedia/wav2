@@ -315,6 +315,13 @@ table.dataTable tbody td {
     color: #dc3545;
 }
 
+/* Tambahan untuk QR & Pairing */
+.qr-box { display:flex;flex-direction:column;align-items:center;padding:15px;background:#fff;border-radius:12px;box-shadow:0 4px 25px rgba(0,0,0,0.1);}
+.qr-timer {margin-top:10px;font-weight:600;color:var(--sidebar-active);}
+.pair-code {font-size:2.2rem;letter-spacing:10px;font-weight:bold;color:var(--sidebar-bg);margin:15px 0;}
+.pair-expire {font-size:0.9rem;color:#888;}
+.sidebar.hide { transform: translateX(-260px); }
+
 /* --- DataTables Responsive Icon Styling --- */
 table.dataTable > tbody > tr > td.dtr-control::before,
 table.dataTable > tbody > tr > th.dtr-control::before {
@@ -356,3 +363,4 @@ table.dataTable > tbody > tr.child span.dtr-title {
         margin-left: 0;
     }
 }
+
