@@ -1,288 +1,182 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WhatsApp SPA • Baileys v7</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <!-- Socket.IO -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
-  <!-- QRCode -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
-  <!-- Toastr -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-  <!-- Emoji Picker (optional) -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-
-  <style>
-    :root{
-      --bg:#0b141a; --panel:#111b21; --panel-2:#202c33; --border:#2a3942; --green:#00a884;
-      --bubble-in:#202c33; --bubble-out:#005c4b; --text:#e9edef; --muted:#aebac1;
-    }
-    *{box-sizing:border-box}
-    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Arial}
-
-    /* LOGIN SCREEN */
-    #login-screen{height:100vh; display:flex; align-items:center; justify-content:center; background:#111b21}
-    .login-card{background:#1b2730; color:#fff; padding:20px; border-radius:12px; border:1px solid var(--border); width:320px}
-
-    /* APP LAYOUT */
-    #app{display:none}
-    .layout{display:flex; height:100vh; overflow:hidden}
-    .sidebar{width:380px; background:var(--panel-2); display:flex; flex-direction:column; border-right:1px solid var(--border)}
-    .sidebar-header{padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; justify-content:space-between}
-    .dot{width:10px; height:10px; border-radius:50%}
-    .dot.on{background:#22c55e} .dot.off{background:#ef4444}
-    .search{padding:8px 12px; border-bottom:1px solid var(--border)}
-    .search input{width:100%; background:#24323a; border:1px solid var(--border); border-radius:8px; color:var(--text); padding:8px 10px}
-    .chat-list{flex:1; overflow:auto}
-    .chat-item{display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer; align-items:center; transition:background .2s}
-    .chat-item:hover{background:#26343b}
-    .avatar{width:46px; height:46px; border-radius:50%; object-fit:cover; background:#3a4b53; display:flex; align-items:center; justify-content:center; font-weight:600}
-    .name{font-weight:600}
-    .jid{font-size:.85rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px}
-
-    .main{flex:1; display:flex; flex-direction:column; background:var(--panel)}
-    .main-header{padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px}
-    .header-avatar{width:40px; height:40px; border-radius:50%; object-fit:cover; background:#3a4b53}
-    .title{font-weight:700}
-    .subtitle{font-size:.85rem; color:var(--muted)}
-
-    .main-body{flex:1; overflow:auto; padding:20px; display:flex; flex-direction:column; gap:10px; background:
-      radial-gradient(1200px 600px at 0% 100%, rgba(0,168,132,.08), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(0,168,132,.05), transparent 60%)}
-    .msg{max-width:74%; padding:10px 14px; border-radius:10px; position:relative; animation:fade .25s ease}
-    .msg.in{align-self:flex-start; background:var(--bubble-in)}
-    .msg.out{align-self:flex-end; background:var(--bubble-out)}
-    .thumb{display:block; max-width:220px; border-radius:10px; margin-bottom:6px}
-    .time{font-size:.75rem; opacity:.7; margin-top:4px}
-
-    .main-footer{padding:10px; border-top:1px solid var(--border); display:flex; gap:8px; align-items:center}
-    .input{flex:1; background:var(--panel-2); border:1px solid var(--border); border-radius:999px; padding:10px 14px; color:var(--text); outline:none}
-    .btn-round{width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); background:var(--panel-2); color:var(--text)}
-
-    emoji-picker{position:absolute; bottom:64px; right:12px; width:320px; height:360px; background:#1f2c33; color:var(--text); border:1px solid var(--border); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); display:none; z-index:20}
-    emoji-picker[open]{display:block}
-
-    @media(max-width:992px){ .sidebar{width:320px} .jid{max-width:160px} }
-    @media(max-width:768px){
-      .layout{flex-direction:column}
-      .sidebar{position:absolute; inset:0 auto 0 -100%; z-index:50; transition:left .3s; width:86%}
-      .sidebar.show{left:0}
-    }
-    @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard WhatsApp User</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="user.css">
 </head>
 <body>
 
-<!-- ===== LOGIN SCREEN (only before connected) ===== -->
-<section id="login-screen">
-  <div class="login-card">
-    <h4 class="mb-3 text-center">Login WhatsApp</h4>
-    <canvas id="qrCanvas" width="220" height="220" style="border:1px solid var(--border)" class="mx-auto d-block"></canvas>
-    <div class="mt-3 small">Scan QR via <b>Linked Devices</b> atau Pairing Code:</div>
-    <div class="input-group input-group-sm mt-2">
-      <input id="pairPhone" class="form-control" placeholder="62812xxxxxxx">
-      <button id="btnPair" class="btn btn-outline-light">Pair</button>
+    <div class="dashboard-wrapper">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fab fa-whatsapp"></i>
+                <h3>WA Control</h3>
+            </div>
+            <ul class="list-unstyled components">
+                <li class="active"><a href="#"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-user-circle fa-fw"></i> Profil</a></li>
+                <li><a href="#"><i class="fas fa-wallet fa-fw"></i> Langganan</a></li>
+                <li><a href="#"><i class="fas fa-cog fa-fw"></i> Pengaturan</a></li>
+            </ul>
+            <ul class="list-unstyled logout">
+                <li><a href="#" class="logout-link"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <div class="overlay" id="overlay"></div>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button type="button" id="sidebar-toggle" class="btn btn-link"><i class="fas fa-bars"></i></button>
+                <div class="user-profile">
+                    <span class="me-2 d-none d-sm-inline">Halo, Siti</span>
+                    <img src="https://i.pravatar.cc/40?u=user-siti" alt="Avatar" class="avatar">
+                </div>
+            </header>
+
+            <section class="row mb-4">
+                <div class="col-12">
+                    <div class="card-main d-flex flex-column flex-md-row justify-content-between align-items-center">
+                        <div>
+                            <h5>Status Koneksi WhatsApp</h5>
+                            <p class="text-muted small mb-0" id="status-description">Hubungkan perangkat Anda untuk memulai.</p>
+                        </div>
+                        <div class="d-flex align-items-center mt-3 mt-md-0">
+                            <div id="status-indicator" class="d-flex align-items-center me-3">
+                                <div class="status-dot disconnected me-2"></div>
+                                <span id="connection-status" class="fw-bold">TERPUTUS</span>
+                            </div>
+                           <button class="btn btn-primary" id="connect-wa-btn"><i class="fab fa-whatsapp me-2"></i>Hubungkan</button>
+                           <button class="btn btn-danger d-none" id="disconnect-wa-btn"><i class="fas fa-power-off me-2"></i>Putuskan</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="main-features">
+                 <div class="card-main">
+                    <div class="disabled-overlay" id="feature-overlay">
+                        <div class="overlay-text"><i class="fas fa-lock me-2"></i> Hubungkan WhatsApp untuk membuka fitur</div>
+                    </div>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#send-message" type="button" role="tab"><i class="fas fa-paper-plane me-2"></i>Kirim Pesan</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#broadcast" type="button" role="tab"><i class="fas fa-bullhorn me-2"></i>Broadcast</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#auto-reply" type="button" role="tab"><i class="fas fa-robot me-2"></i>Auto-Reply</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab"><i class="fas fa-history me-2"></i>Riwayat</button></li>
+                    </ul>
+
+                    <div class="tab-content pt-4" id="myTabContent">
+                        <!-- Kirim Pesan -->
+                        <div class="tab-pane fade show active" id="send-message" role="tabpanel">
+                            <div class="form-header"><i class="fas fa-paper-plane"></i><h6>Kirim Pesan Tunggal</h6></div>
+                            <form id="form-send-message">
+                                <div class="mb-3"><label class="form-label">Nomor Tujuan (format 62...)</label><input type="text" class="form-control" placeholder="6281234567890"></div>
+                                <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4" placeholder="Ketik pesan Anda..."></textarea></div>
+                                
+                                <div class="row">
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label">Media (opsional)</label>
+                                    <input id="singleFile" type="file" class="form-control">
+                                    <div class="form-text">Bisa gambar, video, audio, atau dokumen</div>
+                                  </div>
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label">Caption (opsional)</label>
+                                    <input id="singleCaption" type="text" class="form-control" placeholder="Caption media">
+                                  </div>
+                                </div>
+
+                                <div class="mb-3">
+                                  <label class="form-label">Button JSON (opsional)</label>
+                                  <textarea id="singleButtonsInput" class="form-control" rows="3" placeholder='[{"buttonId":"btn1","buttonText":{"displayText":"OK"},"type":1}]'></textarea>
+                                  <div class="form-text">Kosongkan jika tidak menggunakan tombol</div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                  <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane me-2"></i>Kirim</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Broadcast -->
+                        <div class="tab-pane fade" id="broadcast" role="tabpanel">
+                            <div class="form-header"><i class="fas fa-bullhorn"></i><h6>Kirim Pesan Broadcast</h6></div>
+                            <form id="form-broadcast">
+                                <div class="mb-3"><label class="form-label">Nomor Tujuan (pisahkan dengan koma atau baris baru)</label><textarea class="form-control" rows="3" placeholder="6281..., 6282..., 6283..."></textarea></div>
+                                <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4" placeholder="Ketik pesan broadcast Anda..."></textarea></div>
+
+                                <div class="row">
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label">Media (opsional)</label>
+                                    <input id="bcFile" type="file" class="form-control">
+                                  </div>
+                                  <div class="col-md-6 mb-3">
+                                    <label class="form-label">Caption (opsional)</label>
+                                    <input id="bcCaption" type="text" class="form-control" placeholder="Caption media">
+                                  </div>
+                                </div>
+
+                                <div class="mb-3">
+                                  <label class="form-label">Button JSON (opsional)</label>
+                                  <textarea id="bcButtons" class="form-control" rows="3" placeholder='[{"buttonId":"btn1","buttonText":{"displayText":"YA"},"type":1},{"buttonId":"btn2","buttonText":{"displayText":"TIDAK"},"type":1}]'></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success"><i class="fas fa-bullhorn me-2"></i>Kirim Blast</button>
+                            </form>
+                        </div>
+
+                        <!-- Auto Reply -->
+                        <div class="tab-pane fade" id="auto-reply" role="tabpanel">
+                            <div class="form-header"><i class="fas fa-robot"></i><h6>Pengaturan Balasan Otomatis</h6></div>
+                            <form id="form-auto-reply">
+                                <div class="mb-3"><label class="form-label">Jika pesan mengandung kata kunci...</label><input type="text" class="form-control" placeholder="Contoh: info, harga, promo"></div>
+                                <div class="mb-3"><label class="form-label">Maka balas dengan pesan...</label><textarea class="form-control" rows="4" placeholder="Ketik balasan otomatis Anda..."></textarea></div>
+                                <button type="submit" class="btn btn-info"><i class="fas fa-save me-2"></i>Simpan Pengaturan</button>
+                            </form>
+                        </div>
+
+                        <!-- History -->
+                        <div class="tab-pane fade" id="history" role="tabpanel">
+                            <div class="form-header"><i class="fas fa-history"></i><h6>Riwayat Pesan</h6></div>
+                            <div class="table-responsive">
+                                <table id="history-table" class="table table-hover" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Tujuan</th>
+                                            <th>Pesan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
     </div>
-    <div class="mt-2"><span id="pairCode" class="badge bg-secondary">pairing: -</span></div>
-    <button id="btnStart" class="btn btn-success w-100 mt-3">Start Socket</button>
-  </div>
-</section>
 
-<!-- ===== APP (hidden until connected) ===== -->
-<section id="app">
-  <div class="layout">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="fw-bold">Chats</div>
-        <div class="d-flex align-items-center gap-2">
-          <span id="dot" class="dot off"></span><span id="connText">Disconnected</span>
-        </div>
-      </div>
-      <div class="search"><input id="searchChat" placeholder="Search chat..."></div>
-      <div class="chat-list" id="chatList"></div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main">
-      <div class="main-header">
-        <img id="headerAvatar" class="header-avatar"/>
-        <div>
-          <div id="chatTitle" class="title">Pilih chat</div>
-          <div id="chatSubtitle" class="subtitle">—</div>
-        </div>
-        <button class="btn btn-outline-light btn-sm ms-auto d-md-none" id="btnMenu">☰</button>
-      </div>
-
-      <div class="main-body" id="messages"></div>
-
-      <div class="main-footer position-relative">
-        <button id="btnEmoji" class="btn-round" title="Emoji">😊</button>
-        <input id="msgInput" class="input" placeholder="Tulis pesan…"/>
-        <input id="fileInput" type="file" hidden/>
-        <button id="btnAttach" class="btn-round" title="Lampirkan">📎</button>
-        <button id="btnSend" class="btn-round" title="Kirim">➤</button>
-        <emoji-picker id="picker"></emoji-picker>
-      </div>
-    </main>
-  </div>
-</section>
-
-<script>
-  // ===== INIT =====
-  const socket = io()
-  let activeJid = null
-
-  // Toastr setup
-  toastr.options = { positionClass: "toast-bottom-right", timeOut: 2500, progressBar: true }
-
-  // Elements
-  const $login = $("#login-screen"), $app = $("#app")
-  const $qr = $("#qrCanvas"), $pairPhone = $("#pairPhone"), $btnPair = $("#btnPair"), $pairCode = $("#pairCode"), $btnStart = $("#btnStart")
-  const $sidebar = $("#sidebar"), $btnMenu = $("#btnMenu")
-  const $dot = $("#dot"), $connText = $("#connText")
-  const $searchChat = $("#searchChat"), $chatList = $("#chatList")
-  const $headerAvatar = $("#headerAvatar"), $chatTitle = $("#chatTitle"), $chatSubtitle = $("#chatSubtitle")
-  const $messages = $("#messages"), $msgInput = $("#msgInput"), $btnSend = $("#btnSend"), $btnAttach = $("#btnAttach"), $fileInput = $("#fileInput")
-  const $picker = $("#picker")[0], $btnEmoji = $("#btnEmoji")
-
-  // Show only login by default
-  function showLogin(){ $login.show(); $app.hide() }
-  function showApp(){ $login.hide(); $app.show() }
-  showLogin()
-
-  // UI actions
-  $("#btnMenu").on("click", ()=> $sidebar.toggleClass("show"))
-  $btnStart.on("click", ()=> socket.emit("start"))
-  $btnPair.on("click", ()=>{
-    const phone = $pairPhone.val().trim()
-    if(!phone) return toastr.error("Isi nomor, contoh: 62812xxxxxxx")
-    socket.emit("request_pairing", phone)
-  })
-  $btnEmoji.on("click", ()=> $picker.toggleAttribute("open"))
-  $picker.addEventListener("emoji-click", e => { $msgInput.val($msgInput.val()+e.detail.unicode); $picker.removeAttribute("open"); $msgInput.focus() })
-  $btnAttach.on("click", ()=> $fileInput.trigger("click"))
-  $fileInput.on("change", ()=>{
-    const f = $fileInput[0].files?.[0]; if(!f) return
-    if(!activeJid) return toastr.error("Pilih chat dulu")
-    const r = new FileReader()
-    r.onload = ()=> {
-      socket.emit("send_media", { jid: activeJid, dataURL:r.result, caption:$msgInput.val().trim(), fileName:f.name })
-      $msgInput.val("")
-    }
-    r.readAsDataURL(f)
-  })
-  function sendText(){
-    const t = $msgInput.val().trim(); if(!t) return
-    if(!activeJid) return toastr.error("Pilih chat dulu")
-    socket.emit("send_message", { jid: activeJid, text:t }); $msgInput.val("")
-  }
-  $btnSend.on("click", sendText)
-  $msgInput.on("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); sendText() } })
-
-  $searchChat.on("input", function(){
-    const q = $(this).val().toLowerCase()
-    $chatList.children().each(function(){ $(this).toggle($(this).text().toLowerCase().includes(q)) })
-  })
-
-  // Socket lifecycle
-  socket.emit("start")
-
-  socket.on("connection", d=>{
-    if(d.status==="open" || d.status==="maybe-open"){
-      $dot.removeClass("off").addClass("on"); $connText.text("Connected")
-      showApp(); toastr.success("Terhubung ke WhatsApp")
-    } else {
-      $dot.removeClass("on").addClass("off"); $connText.text("Disconnected")
-      showLogin(); toastr.warning("Belum login / koneksi terputus")
-    }
-  })
-
-  socket.on("qr", async (qr)=>{
-    const ctx = $qr[0].getContext("2d")
-    ctx.clearRect(0,0,$qr[0].width,$qr[0].height)
-    await QRCode.toCanvas($qr[0], qr, { width: 220 })
-    toastr.info("Scan QR dari WhatsApp → Linked Devices")
-  })
-
-  socket.on("pairing-code", code=>{
-    $pairCode.text("pairing: "+code); toastr.info("Pairing code: "+code)
-  })
-
-  socket.on("chat-list", list=>{
-    $chatList.empty()
-    list.forEach(c=>{
-      const $item = $(`
-        <div class="chat-item">
-          ${c.pfp ? `<img class="avatar" src="${c.pfp}"/>` : `<div class="avatar">${(c.name||"?").charAt(0).toUpperCase()}</div>`}
-          <div style="min-width:0">
-            <div class="name">${c.name}</div>
-            <div class="jid">${c.jid}</div>
-          </div>
-        </div>
-      `)
-      $item.on("click", ()=>{
-        activeJid = c.jid
-        $chatTitle.text(c.name); $chatSubtitle.text(c.jid)
-        $messages.empty(); socket.emit("open_chat", activeJid)
-        if (window.innerWidth < 768) $sidebar.removeClass("show")
-      })
-      $chatList.append($item)
-    })
-  })
-
-  socket.on("chat-header", ({ jid, pfp })=>{
-    if(jid!==activeJid) return
-    if(pfp) $headerAvatar.attr("src", pfp); else $headerAvatar.removeAttr("src").css("background", "#3a4b53")
-  })
-
-  socket.on("chat-history", arr=>{
-    arr.forEach(renderMessage)
-    $messages.scrollTop($messages.prop("scrollHeight"))
-  })
-
-  socket.on("message", m=>{
-    if (activeJid !== m.jid) toastr.info(m.text || "Pesan baru")
-    if (activeJid && m.jid !== activeJid) return
-    renderMessage(m)
-  })
-
-  socket.on("sent_ok", ({type})=>{
-    if(type==="text") toastr.success("Pesan terkirim")
-    else if(type==="media") toastr.success("Media terkirim")
-    else if(type==="react") toastr.success("Reaction terkirim")
-  })
-
-  socket.on("error", e=> toastr.error(e || "Terjadi kesalahan"))
-
-  // render pesan + reaction via contextmenu
-  function renderMessage(m){
-    const $div = $(`<div class="msg ${m.fromMe?'out':'in'}"></div>`)
-    // reaction
-    $div.on("contextmenu", e=>{
-      e.preventDefault()
-      const emoji = prompt("React emoji (mis. 😀,❤️,👍):")
-      if(emoji) socket.emit("react_message", { jid: m.jid, key: m.key, emoji })
-    })
-    if(m.mediaThumb) $div.append(`<img class="thumb" src="${m.mediaThumb}">`)
-    $div.append(`<div>${m.text || (m.hasMedia? "(media)":"(pesan)")}</div>`)
-    const t = new Date(m.timestamp || Date.now())
-    $div.append(`<div class="time">${t.toLocaleTimeString()}</div>`)
-    $messages.append($div)
-    $messages.scrollTop($messages.prop("scrollHeight"))
-  }
-</script>
+    <!-- JS libs -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="user.js"></script>
 </body>
 </html>
