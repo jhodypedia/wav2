@@ -17,6 +17,7 @@
 <body>
 
 <div class="dashboard-wrapper">
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <i class="fab fa-whatsapp"></i>
@@ -35,6 +36,7 @@
 
     <div class="overlay" id="overlay"></div>
 
+    <!-- Main Content -->
     <main class="main-content">
         <header class="content-header">
             <button type="button" id="sidebar-toggle" class="btn btn-link"><i class="fas fa-bars"></i></button>
@@ -44,6 +46,7 @@
             </div>
         </header>
 
+        <!-- Status -->
         <section class="row mb-4">
             <div class="col-12">
                 <div class="card-main d-flex flex-column flex-md-row justify-content-between align-items-center">
@@ -63,100 +66,82 @@
             </div>
         </section>
         
+        <!-- Tabs -->
         <section class="main-features">
             <div class="card-main">
                 <div class="disabled-overlay" id="feature-overlay">
                     <div class="overlay-text"><i class="fas fa-lock me-2"></i> Hubungkan WhatsApp untuk membuka fitur</div>
                 </div>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#send-message" type="button" role="tab"><i class="fas fa-paper-plane me-2"></i>Kirim Pesan</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#broadcast" type="button" role="tab"><i class="fas fa-bullhorn me-2"></i>Broadcast</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#auto-reply" type="button" role="tab"><i class="fas fa-robot me-2"></i>Auto-Reply</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab"><i class="fas fa-history me-2"></i>Riwayat</button></li>
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#send-message"><i class="fas fa-paper-plane me-2"></i>Kirim Pesan</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#broadcast"><i class="fas fa-bullhorn me-2"></i>Broadcast</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#auto-reply"><i class="fas fa-robot me-2"></i>Auto-Reply</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#history"><i class="fas fa-history me-2"></i>Riwayat</button></li>
                 </ul>
 
                 <div class="tab-content pt-4" id="myTabContent">
                     <!-- Kirim Pesan -->
-                    <div class="tab-pane fade show active" id="send-message" role="tabpanel">
+                    <div class="tab-pane fade show active" id="send-message">
                         <div class="form-header"><i class="fas fa-paper-plane"></i><h6>Kirim Pesan Tunggal</h6></div>
                         <form id="form-send-message">
-                            <div class="mb-3"><label class="form-label">Nomor Tujuan (format 62...)</label><input type="text" class="form-control" placeholder="6281234567890"></div>
-                            <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4" placeholder="Ketik pesan Anda..."></textarea></div>
+                            <div class="mb-3"><label class="form-label">Nomor Tujuan</label><input type="text" class="form-control" placeholder="6281234567890"></div>
+                            <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4" placeholder="Ketik pesan..."></textarea></div>
                             
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Media (opsional)</label>
-                                    <input id="singleFile" type="file" class="form-control">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Caption (opsional)</label>
-                                    <input id="singleCaption" type="text" class="form-control" placeholder="Caption media">
-                                </div>
+                            <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="useMediaSingle"><label class="form-check-label">Gunakan Media</label></div>
+                            <div id="mediaSingleFields" class="row d-none">
+                                <div class="col-md-6 mb-3"><label class="form-label">Media</label><input id="singleFile" type="file" class="form-control"></div>
+                                <div class="col-md-6 mb-3"><label class="form-label">Caption</label><input id="singleCaption" type="text" class="form-control"></div>
                             </div>
 
-                            <!-- Tombol max 3 -->
-                            <div class="mb-3">
-                                <label class="form-label">Tambahkan Tombol (opsional, max 3)</label>
-                                <div class="row g-2">
-                                    <div class="col-md-4"><input id="btn1" type="text" class="form-control" placeholder="Tombol 1"></div>
-                                    <div class="col-md-4"><input id="btn2" type="text" class="form-control" placeholder="Tombol 2"></div>
-                                    <div class="col-md-4"><input id="btn3" type="text" class="form-control" placeholder="Tombol 3"></div>
-                                </div>
+                            <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="useButtonsSingle"><label class="form-check-label">Gunakan Tombol</label></div>
+                            <div id="buttonsSingleFields" class="row g-2 d-none">
+                                <div class="col-md-4"><input id="btn1" type="text" class="form-control" placeholder="Tombol 1"></div>
+                                <div class="col-md-4"><input id="btn2" type="text" class="form-control" placeholder="Tombol 2"></div>
+                                <div class="col-md-4"><input id="btn3" type="text" class="form-control" placeholder="Tombol 3"></div>
                             </div>
-
                             <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane me-2"></i>Kirim</button>
                         </form>
                     </div>
 
                     <!-- Broadcast -->
-                    <div class="tab-pane fade" id="broadcast" role="tabpanel">
-                        <div class="form-header"><i class="fas fa-bullhorn"></i><h6>Kirim Pesan Broadcast</h6></div>
+                    <div class="tab-pane fade" id="broadcast">
+                        <div class="form-header"><i class="fas fa-bullhorn"></i><h6>Broadcast</h6></div>
                         <form id="form-broadcast">
-                            <div class="mb-3"><label class="form-label">Nomor Tujuan (pisahkan dengan koma/baris baru)</label><textarea class="form-control" rows="3" placeholder="6281..., 6282..., 6283..."></textarea></div>
-                            <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4" placeholder="Ketik pesan broadcast Anda..."></textarea></div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3"><label class="form-label">Media (opsional)</label><input id="bcFile" type="file" class="form-control"></div>
-                                <div class="col-md-6 mb-3"><label class="form-label">Caption (opsional)</label><input id="bcCaption" type="text" class="form-control" placeholder="Caption media"></div>
+                            <div class="mb-3"><label class="form-label">Nomor Tujuan (pisahkan koma/baris baru)</label><textarea class="form-control" rows="3"></textarea></div>
+                            <div class="mb-3"><label class="form-label">Isi Pesan</label><textarea class="form-control" rows="4"></textarea></div>
+                            
+                            <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="useMediaBc"><label class="form-check-label">Gunakan Media</label></div>
+                            <div id="mediaBcFields" class="row d-none">
+                                <div class="col-md-6 mb-3"><label class="form-label">Media</label><input id="bcFile" type="file" class="form-control"></div>
+                                <div class="col-md-6 mb-3"><label class="form-label">Caption</label><input id="bcCaption" type="text" class="form-control"></div>
                             </div>
 
-                            <!-- Tombol max 3 -->
-                            <div class="mb-3">
-                                <label class="form-label">Tambahkan Tombol (opsional, max 3)</label>
-                                <div class="row g-2">
-                                    <div class="col-md-4"><input id="bcBtn1" type="text" class="form-control" placeholder="Tombol 1"></div>
-                                    <div class="col-md-4"><input id="bcBtn2" type="text" class="form-control" placeholder="Tombol 2"></div>
-                                    <div class="col-md-4"><input id="bcBtn3" type="text" class="form-control" placeholder="Tombol 3"></div>
-                                </div>
+                            <div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="useButtonsBc"><label class="form-check-label">Gunakan Tombol</label></div>
+                            <div id="buttonsBcFields" class="row g-2 d-none">
+                                <div class="col-md-4"><input id="bcBtn1" type="text" class="form-control" placeholder="Tombol 1"></div>
+                                <div class="col-md-4"><input id="bcBtn2" type="text" class="form-control" placeholder="Tombol 2"></div>
+                                <div class="col-md-4"><input id="bcBtn3" type="text" class="form-control" placeholder="Tombol 3"></div>
                             </div>
-
                             <button type="submit" class="btn btn-success"><i class="fas fa-bullhorn me-2"></i>Kirim Blast</button>
                         </form>
                     </div>
 
                     <!-- Auto Reply -->
-                    <div class="tab-pane fade" id="auto-reply" role="tabpanel">
-                        <div class="form-header"><i class="fas fa-robot"></i><h6>Pengaturan Balasan Otomatis</h6></div>
+                    <div class="tab-pane fade" id="auto-reply">
+                        <div class="form-header"><i class="fas fa-robot"></i><h6>Auto Reply</h6></div>
                         <form id="form-auto-reply">
-                            <div class="mb-3"><label class="form-label">Jika pesan mengandung kata kunci...</label><input type="text" class="form-control" placeholder="Contoh: info, harga, promo"></div>
-                            <div class="mb-3"><label class="form-label">Maka balas dengan pesan...</label><textarea class="form-control" rows="4" placeholder="Ketik balasan otomatis Anda..."></textarea></div>
-                            <button type="submit" class="btn btn-info"><i class="fas fa-save me-2"></i>Simpan Pengaturan</button>
+                            <div class="mb-3"><label class="form-label">Kata Kunci</label><input type="text" class="form-control"></div>
+                            <div class="mb-3"><label class="form-label">Balasan</label><textarea class="form-control" rows="3"></textarea></div>
+                            <button type="submit" class="btn btn-info"><i class="fas fa-save me-2"></i>Simpan</button>
                         </form>
                     </div>
 
                     <!-- History -->
-                    <div class="tab-pane fade" id="history" role="tabpanel">
-                        <div class="form-header"><i class="fas fa-history"></i><h6>Riwayat Pesan</h6></div>
+                    <div class="tab-pane fade" id="history">
+                        <div class="form-header"><i class="fas fa-history"></i><h6>Riwayat</h6></div>
                         <div class="table-responsive">
                             <table id="history-table" class="table table-hover" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Tujuan</th>
-                                        <th>Pesan</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr><th>Tanggal</th><th>Tujuan</th><th>Pesan</th><th>Status</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -167,7 +152,6 @@
     </main>
 </div>
 
-<!-- JS libs -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
